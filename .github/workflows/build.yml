@@ -3,7 +3,7 @@ name: Budowanie APK na Android TV
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch: # Pozwala też uruchomić budowanie ręcznie jednym przyciskiem
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -13,7 +13,12 @@ jobs:
       - name: Pobieranie kodu z repozytorium
         uses: actions/checkout@v4
 
-      - name: Konfiguracja środowiska Java 17 (wymagane przez Android SDK)
+      - name: Instalacja bibliotek systemowych Linux (GTK 3)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev clang cmake ninja-build pkg-config
+
+      - name: Konfiguracja środowiska Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -24,16 +29,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Konfiguracja Fluttera (silnik graficzny Flet)
+      - name: Konfiguracja Fluttera
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.24.3'
+          flutter-version: '3.27.1'
+
+      - name: Akceptacja licencji Android SDK
+        run: |
+          flutter config --no-enable-linux-desktop --no-enable-web
+          yes | flutter doctor --android-licenses || true
 
       - name: Instalacja Flet i budowanie pliku APK
         run: |
-          pip install "flet[all]==0.24.1" flet-video requests
-          flet build apk --verbose
+          pip install "flet[all]==0.25.2" flet-video requests
+          flet build apk --verbose --no-rich-output
 
       - name: Udostępnienie gotowego pliku APK do pobrania
         uses: actions/upload-artifact@v4
