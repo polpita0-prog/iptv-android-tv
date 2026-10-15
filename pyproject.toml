@@ -1,0 +1,13 @@
+[project]
+name = "iptv-client-pro"
+version = "1.0.0"
+description = "IPTV Client PRO na Android TV"
+dependencies = [
+    "flet>=0.24.0",
+    "flet-video",
+    "requests"
+]
+
+[tool.flet]
+org = "pl.twojanazwa"
+product = "IPTV Client PRO"
