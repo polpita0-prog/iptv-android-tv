@@ -13,6 +13,11 @@ jobs:
       - name: Pobieranie kodu z repozytorium
         uses: actions/checkout@v4
 
+      - name: Instalacja wymaganych bibliotek systemowych Linux (GTK 3)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev clang cmake ninja-build pkg-config
+
       - name: Konfiguracja środowiska Java 17
         uses: actions/setup-java@v4
         with:
@@ -30,8 +35,10 @@ jobs:
           channel: 'stable'
           flutter-version: '3.24.3'
 
-      - name: Akceptacja licencji Android SDK
-        run: yes | flutter doctor --android-licenses
+      - name: Akceptacja wszystkich licencji Android SDK
+        run: |
+          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | flutter doctor --android-licenses || true
 
       - name: Instalacja Flet i budowanie pliku APK
         run: |
