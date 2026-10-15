@@ -1,0 +1,42 @@
+name: Budowanie APK na Android TV
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Pozwala też uruchomić budowanie ręcznie jednym przyciskiem
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pobieranie kodu z repozytorium
+        uses: actions/checkout@v4
+
+      - name: Konfiguracja środowiska Java 17 (wymagane przez Android SDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Konfiguracja Pythona
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Konfiguracja Fluttera (silnik graficzny Flet)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.24.3'
+
+      - name: Instalacja Flet i budowanie pliku APK
+        run: |
+          pip install "flet[all]==0.24.1" flet-video requests
+          flet build apk --verbose
+
+      - name: Udostępnienie gotowego pliku APK do pobrania
+        uses: actions/upload-artifact@v4
+        with:
+          name: IPTV-Client-PRO-AndroidTV-APK
+          path: build/apk/*.apk
