@@ -35,9 +35,9 @@ jobs:
           flutter config --no-enable-linux-desktop --no-enable-web
           yes | flutter doctor --android-licenses || true
 
-      - name: Instalacja Flet 0.24.0 i budowanie pliku APK
+      - name: Instalacja Flet 0.23.2 i budowanie pliku APK
         run: |
-          pip install "flet[all]==0.24.0" flet-video requests
+          pip install "flet[all]==0.23.2" flet-video requests
           flet build apk --verbose --no-rich-output
 
       - name: Udostępnienie gotowego pliku APK do pobrania
