@@ -35,10 +35,12 @@ jobs:
           flutter config --no-enable-linux-desktop --no-enable-web
           yes | flutter doctor --android-licenses || true
 
-      - name: Instalacja Flet 0.23.2 i budowanie pliku APK
+      - name: Budowanie pliku APK
+        env:
+          MSGPACK_PUREPYTHON: "1"
         run: |
           pip install "flet[all]==0.23.2" flet-video requests
-          flet build apk --verbose --no-rich-output
+          flet build apk --verbose
 
       - name: Udostępnienie gotowego pliku APK do pobrania
         uses: actions/upload-artifact@v4
